@@ -2,7 +2,7 @@ module.exports.config = {
 	name: "top",
 	version: "1.0.6",
 	hasPermssion: 0,
-	credits: "CatalizCS mod and fix by D-Jukie",
+	credits: "CatalizCS",
 	description: "Xem các cấp độ của người dùng",
 	commandCategory: "Nhóm",
 	usages: "[thread/user/money/level]",
