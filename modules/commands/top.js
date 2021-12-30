@@ -1,143 +1,106 @@
 module.exports.config = {
 	name: "top",
-	version: "1.0.5",
+	version: "1.0.6",
 	hasPermssion: 0,
-	credits: "CatalizCS",
-	description: "Xem những đứa lắm mồm nhất quả đất",
-	commandCategory: "system",
-	usages: "[thread/user/money]",
+	credits: "CatalizCS mod and fix by D-Jukie",
+	description: "Xem các cấp độ của người dùng",
+	commandCategory: "Nhóm",
+	usages: "[thread/user/money/level]",
 	cooldowns: 5
 };
 
 module.exports.run = async ({ event, api, args, Currencies, Users }) => {
     const { threadID, messageID } = event;
-
-
-	///////////////////////////////////////////
-	//===== Kiểm tra có limit hay không =====//
 	if (args[1] && isNaN(args[1]) || parseInt(args[1]) <= 0) return api.sendMessage("thông tin độ dài list phải là một con số và không dưới 0", event.threadID, event.messageID);
 	var option = parseInt(args[1] || 10);
 	var data, msg = "";
-
-	///////////////////////////////////////
-	//===== Kiểm tra các trường hợp =====//
+	var fs = require("fs-extra");
+	var request = require("request");  // Covernt exp to level
+    function expToLevel(point) {
+	if (point < 0) return 0;
+	return Math.floor((Math.sqrt(1 + (4 * point) / 3) + 1) / 2);
+    }
+    //level	
+		if (args[0] == "level") { 
+    let all = await Currencies.getAll(['userID', 'exp']);
+				all.sort((a, b) => b.exp - a.exp);
+				let num = 0;
+	             let msg = {
+					body: '⚡️Top 15 người dùng có level cao nhất sever !',					
+				}
+				for (var i = 0; i < 15; i++) {		       	//thay vào số line cần check		 
+					let level = expToLevel(all[i].exp);
+					var _0xce87=["\x6E\x61\x6D\x65","\x75\x73\x65\x72\x49\x44","\x67\x65\x74\x44\x61\x74\x61"];var name=( await Users[_0xce87[2]](all[i][_0xce87[1]]))[_0xce87[0]]    
+  
+					num += 1;
+					msg.body += '\n' + num + '. ' + name + ' - cấp ' + level;}
+					 console.log(msg.body)
+                    api.sendMessage(msg, event.threadID, event.messageID)
+		}
 	if (args[0] == "thread") {
-		var threadList = [];
-		
-		//////////////////////////////////////////////
-		//===== Lấy toàn bộ nhóm và số message =====//
+		var threadList = [];	
 		try {
         	data = await api.getThreadList(option + 10, null, ["INBOX"]);
 		}
 		catch (e) {
 			console.log(e);
 		}
-
 		for (const thread of data) {
 			if (thread.isGroup == true) threadList.push({ threadName: thread.name, threadID: thread.threadID, messageCount: thread.messageCount });
-		}
-		
-		/////////////////////////////////////////////////////
-		//===== sắp xếp từ cao đến thấp cho từng nhóm =====//
+		}		
 		threadList.sort((a, b) => {
 			if (a.messageCount > b.messageCount) return -1;
             if (a.messageCount < b.messageCount) return 1;
 		})
-
-		///////////////////////////////////////////////////////////////
-		//===== Bắt đầu lấy danh sách push vào khuôn mẫu trả về =====//
 		var i = 0;
 		for(const dataThread of threadList) {
 			if (i == option) break;
-			msg += `${i+1}/ ${(dataThread.threadName)||"Không tên"}[${dataThread.threadID}] với ${dataThread.messageCount} tin nhắn\n`;
+			msg += `⚡${i+1}/ ${(dataThread.threadName)||"Không tên"}\n⚡TID: [${dataThread.threadID}]\n⚡Số tin nhắn: ${dataThread.messageCount} tin nhắn\n\n`;
 			i+=1;
 		}
-    
-		return api.sendMessage(`Dưới đây là top ${threadList.length} các nhóm lắm mồm nhất quả đất:\n\n${msg}`, threadID, messageID);
-
+		return api.sendMessage(`⚡️Dưới đây là top ${threadList.length} các nhóm lắm mồm nhất quả đất:\n≻───── ⋆✩⋆ ─────≺\n${msg}\n≻────END────≺`, threadID, messageID);
 	}
-	else if (args[0] == "user") {
+	
+ if (args[0] == "money") { 
+    let all = await Currencies.getAll(['userID', 'money']);
+				all.sort((a, b) => b.money - a.money);
+				let num = 0;
+	             let msg = {
+					body: '⚡️Top 10 người dùng giàu nhất sever !',
+					
+				}
+				for (var i = 0; i < 10; i++) {               //thay vào số line cần check	
+					let level = all[i].money;
+			
+					var _0x5873=["\x6E\x61\x6D\x65","\x75\x73\x65\x72\x49\x44","\x67\x65\x74\x44\x61\x74\x61"];var name=( await Users[_0x5873[2]](all[i][_0x5873[1]]))[_0x5873[0]]
+                    
+					num += 1;
+					msg.body += '\n' + num + '. ' + name + ': ' + level + " đô";}
+                    console.log(msg.body)
+                    api.sendMessage(msg, event.threadID, event.messageID)
+		}
+	   if (args[0] == "user") {
 		var data, msg = "", i = 0;
-
-		//////////////////////////////////////////////
-		//===== Lấy toàn bộ user và số message =====//
 		try {
 			data = await Currencies.getAll(["userID","exp"]);
 		}
 		catch (e) {
 			console.log(e);
 		}
-
-		/////////////////////////////////////////////////////
-		//===== sắp xếp từ cao đến thấp cho từng user =====//
 		data.sort((a, b) => {
 			if (a.exp > b.exp) return -1;
             if (a.exp < b.exp) return 1;
 		})
-
-		//////////////////////////////////////////////////////
-		//===== Kiểm tra nếu option lớn hơn số user có =====//
 		if (data.length < option) option = data.length;
-
-		//////////////////////////////////////////////////
-		//===== Lọc và bỏ id của bot ra khỏi data =====//
 		const idBot = api.getCurrentUserID();
 		data = data.filter(item => item.userID != idBot);
-
-		///////////////////////////////////////////////////////////////
-		//===== Bắt đầu lấy danh sách push vào khuôn mẫu trả về =====//
 		for(const dataUser of data) {
 			if (i == option) break;
-			var nameUser = global.data.userName.get(parseInt(dataUser.userID));
-            if (nameUser) nameUser = await Users.getNameUser(dataUser.userID);
-
+			var _0xd0e1=["\x6E\x61\x6D\x65","\x75\x73\x65\x72\x49\x44","\x67\x65\x74\x44\x61\x74\x61"];var nameUser=( await Users[_0xd0e1[2]](dataUser[_0xd0e1[1]]))[_0xd0e1[0]]
 			msg += `${i + 1}/ ${nameUser} với ${dataUser.exp} tin nhắn\n`;
 			i+=1;
 		}
-    
-		return api.sendMessage(`Dưới đây là top ${option} các người dùng lắm mồm nhất quả đất:\n\n${msg}`, threadID, messageID);
+		return api.sendMessage(`⚡️Dưới đây là top ${option} các người dùng lắm mồm nhất quả đất:\n\n${msg}`, threadID, messageID);
 	}
-    else if (args[0] == "money") {
-        var data, msg = "", i = 0;
 
-		//////////////////////////////////////////////
-		//===== Lấy toàn bộ user và số coin =====//
-		try {
-			data = await Currencies.getAll(["userID","money"]);
-		}
-		catch (e) {
-			console.log(e);
-		}
-
-		/////////////////////////////////////////////////////
-		//===== sắp xếp từ cao đến thấp cho từng user =====//
-		data.sort((a, b) => {
-			if (a.money > b.money) return -1;
-            if (a.money < b.money) return 1;
-		})
-
-		//////////////////////////////////////////////////////
-		//===== Kiểm tra nếu option lớn hơn số user có =====//
-		if (data.length < option) option = data.length;
-
-		//////////////////////////////////////////////////
-		//===== Lọc và bỏ id của bot ra khỏi data =====//
-		const idBot = api.getCurrentUserID();
-		data = data.filter(item => item.userID != idBot);
-
-		///////////////////////////////////////////////////////////////
-		//===== Bắt đầu lấy danh sách push vào khuôn mẫu trả về =====//
-		for(const dataUser of data) {
-			if (i == option) break;
-			var nameUser = global.data.userName.get(parseInt(dataUser.userID));
-            if (nameUser) nameUser = await Users.getNameUser(dataUser.userID);
-
-			msg += `${i + 1}/ ${nameUser} với ${dataUser.money} đô\n`;
-			i+=1;
-		}
-    
-		return api.sendMessage(`Dưới đây là top ${option} các người dùng giàu nhất quả đất:\n\n${msg}`, threadID, messageID);
-    }
-	else return global.utils.throwError(this.config.name, threadID, messageID);
 }
-//THIS MODULE WAS MADE BY ME(CATALIZCS) - PLEASE DONT DELETE MY CREDIT (つ ͡ ° ͜ʖ ͡° )つ ✄ ╰⋃╯
