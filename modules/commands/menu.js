@@ -1,72 +1,144 @@
+/*
+LẤY Ý TƯỞNG TỪ AI ĐÓ MÀ TÔI KHÔNG BIẾT
+*/
+
 module.exports.config = {
 	name: "menu",
-	version: "1.0.2",
+	version: "1.0.0",
 	hasPermssion: 0,
-	credits: "Mirai Team",
-	description: "Hướng dẫn cho người mới",
+	credits: "DungUwU",
+	description: "Menu, just a menu",
+	usages: "[all/-a] [số trang]",
 	commandCategory: "system",
-	usages: "[Tên module]",
-	cooldowns: 5,
-	envConfig: {
-		autoUnsend: true,
-		delayUnsend: 30
-	}
+	cooldowns: 5
 };
 
-module.exports.languages = {
-	"vi": {
-		"moduleInfo": "$$$ %1 $$$\n%2\n\n❯ Cách sử dụng: %3\n❯ Thuộc nhóm: %4\n❯ Thời gian chờ: %5 giây(s)\n❯ Quyền hạn: %6\n\n»¥BOT được điều hành bởi Gin«",
-		"helpList": 'Bot nay duoc support by Gin\n🐳 𝐻𝑖𝑒̣̂𝑛 𝑡𝑎̣𝑖 đ𝑎𝑛𝑔 𝑐𝑜́ %1 𝑙𝑒̣̂𝑛ℎ 𝑐𝑜́ 𝑡ℎ𝑒̂̉ 𝑠𝑢̛̉ 𝑑𝑢̣𝑛𝑔 𝑡𝑟𝑒̂𝑛 𝑏𝑜𝑡 𝑐𝑢̉𝑎 Gin.\n𝑆𝑢̛̉ 𝑑𝑢̣𝑛𝑔: "%2menu + 𝑙𝑒̣̂𝑛ℎ"đ𝑒̂̉ 𝑥𝑒𝑚 𝑐ℎ𝑖 𝑡𝑖𝑒̂́𝑡 𝑐𝑎́𝑐ℎ 𝑠𝑢̛̉ 𝑑𝑢̣𝑛𝑔!🐳\n𝐿𝑖𝑒̂𝑛 ℎ𝑒̣̂ 𝐹𝐵:\nhttps://www.facebook.com/ginza1502 đ𝑒̂̉ đ𝑢̛𝑜̛̣𝑐 ℎ𝑜̂̃ 𝑡𝑟𝑜̛̣.\n🐳Nhớ mở "luật bot" để đọc luật sử dụng BOT🐳\n\n💜 Thanks All UwU 💜',
-		"user": "Người dùng",
-        "adminGroup": "Quản trị viên nhóm",
-        "adminBot": "Quản trị viên bot"
-	},
-	"en": {
-		"moduleInfo": "「 %1 」\n%2\n\n❯ Usage: %3\n❯ Category: %4\n❯ Waiting time: %5 seconds(s)\n❯ Permission: %6\n\n» Module code by %7 «",
-		"helpList": '[ There are %1 commands on this bot, Use: "%2help nameCommand" to know how to use! ]',
-		"user": "User",
-        "adminGroup": "Admin group",
-        "adminBot": "Admin bot"
+module.exports.handleReply = ({ api, event, handleReply }) => {
+	let num = parseInt(event.body.split(" ")[0].trim());
+	(handleReply.bonus) ? num -= handleReply.bonus : num;
+	let msg = "";
+	let data = handleReply.content;
+	let check = false;
+	if (isNaN(num)) msg = "Not a number";
+	else if (num > data.length || num <= 0) msg = "Not available";
+	else {
+		const { commands } = global.client;
+		let dataAfter = data[num-=1];
+		if (handleReply.type == "cmd_info") {
+			let command_config = commands.get(dataAfter).config;
+			msg += `「    ${command_config.commandCategory.toUpperCase()}    」\n`;
+			msg += `\n+ Tên: ${dataAfter}`;
+			msg += `\n+ Mô tả: ${command_config.description}`;
+			msg += `\n+ Cách dùng: ${(command_config.usages) ? command_config.usages : ""}`;
+			msg += `\n+ Thời gian chờ: ${command_config.cooldowns || 5}s`;
+			msg += `\n+ Quyền hạn: ${(command_config.hasPermssion == 0) ? "Người dùng" : (command_config.hasPermssion == 1) ? "Quản trị viên nhóm" : "Quản trị viên bot"}`;
+			msg += `\n\n» Module code by ${command_config.credits} «`;
+		} else {
+			check = true;
+			let count = 0;
+			msg += `「    ${dataAfter.group.toUpperCase()}    」\n`;
+
+			dataAfter.cmds.forEach(item => {
+				msg += `\n ${count+=1}. ${item}: ${commands.get(item).config.description}`;
+			})
+			msg += "\n\n+ Reply tin nhắn theo số để xem thông tin chi tiết lệnh";
+		}
 	}
+
+	return api.sendMessage(msg, event.threadID, (error, info) => {
+		if (error) console.log(error);
+		if (check) {
+			global.client.handleReply.push({
+				type: "cmd_info",
+				name: this.config.name,
+				messageID: info.messageID,
+				content: data[num].cmds
+			})
+		}
+	}, event.messageID);
 }
 
-module.exports.handleEvent = function ({ api, event, getText }) {
-	const { commands } = global.client;
-	const { threadID, messageID, body } = event;
-
-	if (!body || typeof body == "undefined" || body.indexOf("menu") != 0) return;
-	const splitBody = body.slice(body.indexOf("menu")).trim().split(/\s+/);
-	if (splitBody.length == 1 || !commands.has(splitBody[1].toLowerCase())) return;
-	const threadSetting = global.data.threadData.get(parseInt(threadID)) || {};
-	const command = commands.get(splitBody[1].toLowerCase());
-	const prefix = (threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX : global.config.PREFIX;
-	return api.sendMessage(getText("moduleInfo", command.config.name, command.config.description, `${prefix}${command.config.name} ${(command.config.usages) ? command.config.usages : ""}`, command.config.commandCategory, command.config.cooldowns, ((command.config.hasPermssion == 0) ? getText("user") : (command.config.hasPermssion == 1) ? getText("adminGroup") : getText("adminBot")), command.config.credits), threadID, messageID);
-}
-
-module.exports.run = function({ api, event, args, getText }) {
+module.exports.run = function({ api, event, args }) {
 	const { commands } = global.client;
 	const { threadID, messageID } = event;
-	const command = commands.get((args[0] || "").toLowerCase());
 	const threadSetting = global.data.threadData.get(parseInt(threadID)) || {};
-	const { autoUnsend, delayUnsend } = global.configModule[this.config.name];
 	const prefix = (threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX : global.config.PREFIX;
 
-	if (!command) {
-		const command = commands.values();
-		var group = [], msg = "";
-		for (const commandConfig of command) {
-			if (!group.some(item => item.group.toLowerCase() == commandConfig.config.commandCategory.toLowerCase())) group.push({ group: commandConfig.config.commandCategory.toLowerCase(), cmds: [commandConfig.config.name] });
-			else group.find(item => item.group.toLowerCase() == commandConfig.config.commandCategory.toLowerCase()).cmds.push(commandConfig.config.name);
-		}
-		group.forEach(commandGroup => msg += `🐳🐳 ${commandGroup.group.charAt(0).toUpperCase() + commandGroup.group.slice(1)} 🐳🐳\n${commandGroup.cmds.join(', ')}\n\n`);
-		return api.sendMessage(msg + getText("helpList", commands.size, prefix), threadID, async (error, info) =>{
-			if (autoUnsend) {
-				await new Promise(resolve => setTimeout(resolve, delayUnsend * 1000));
-				return api.unsendMessage(info.messageID);
-			} else return;
-		});
+	const command = commands.values();
+	var group = [], msg = "- ===+ MENU +=== -\n";
+	let check = true, page_num_input = "";
+	let bonus = 0;
 
+	for (const commandConfig of command) {
+		if (!group.some(item => item.group.toLowerCase() == commandConfig.config.commandCategory.toLowerCase())) group.push({ group: commandConfig.config.commandCategory.toLowerCase(), cmds: [commandConfig.config.name] });
+		else group.find(item => item.group.toLowerCase() == commandConfig.config.commandCategory.toLowerCase()).cmds.push(commandConfig.config.name);
 	}
 
-	return api.sendMessage(getText("moduleInfo", command.config.name, command.config.description, `${prefix}${command.config.name} ${(command.config.usages) ? command.config.usages : ""}`, command.config.commandCategory, command.config.cooldowns, ((command.config.hasPermssion == 0) ? getText("user") : (command.config.hasPermssion == 1) ? getText("adminGroup") : getText("adminBot")), command.config.credits), threadID, messageID);
+	if (args[0] && ["all", "-a"].includes(args[0].trim())) {
+		let all_commands = [];
+		group.forEach(commandGroup => {
+			commandGroup.cmds.forEach(item => all_commands.push(item));
+		});
+		let page_num_total = Math.ceil(all_commands.length / 10);
+		if (args[1]) {
+			check = false;
+			page_num_input = parseInt(args[1]);
+			if (isNaN(page_num_input)) msg = "Not a number";
+			else if (page_num_input > page_num_total || page_num_input <= 0) msg = "Not available";
+			else check = true;
+		}
+		if (check) {
+			index_start = (page_num_input) ? (page_num_input * 10) - 10 : 0;
+			bonus = index_start;
+			index_end = (index_start + 10 > all_commands.length) ? all_commands.length : index_start + 10;
+			all_commands = all_commands.slice(index_start, index_end);
+			all_commands.forEach(e => {
+				msg += `\n${index_start+=1}. ${e}: ${commands.get(e).config.description}`;
+			})
+			msg += `\n\n+ Page(${page_num_input || 1}/${page_num_total})`;
+			msg += `\n+ Để xem các trang khác, dùng: ${prefix}menu [all/-a] [số trang]`;
+			msg += "\n+ Reply tin nhắn theo số để xem thông tin chi tiết lệnh";
+		}
+		return api.sendMessage(msg, threadID, (error, info) => {
+			if (check) {
+				global.client.handleReply.push({
+					type: "cmd_info",
+					bonus: bonus,
+					name: this.config.name,
+					messageID: info.messageID,
+					content: all_commands
+				})
+			}
+		}, messageID)
+	}
+
+	let page_num_total = Math.ceil(group.length / 10);
+	if (args[0]) {
+		check = false;
+		page_num_input = parseInt(args[0]);
+		if (isNaN(page_num_input)) msg = "Not a number";
+		else if (page_num_input > page_num_total || page_num_input <= 0) msg = "Not available";
+		else check = true;
+	}
+	if (check) {
+		index_start = (page_num_input) ? (page_num_input * 10) - 10 : 0;
+		bonus = index_start;
+		index_end = (index_start + 10 > group.length) ? group.length : index_start + 10;
+		console.log(page_num_input)
+		console.log(index_start)
+		console.log(index_end)
+		group = group.slice(index_start, index_end);
+		group.forEach(commandGroup => msg += `\n${index_start+=1} -「 ${commandGroup.group.toUpperCase()} 」`);
+		msg += `\n\n+ Page(${page_num_input || 1}/${page_num_total})`;
+		msg += `\n+ Để xem các trang khác, dùng: ${prefix}menu [số trang]`;
+		msg += `\n+ Reply tin nhắn theo số để xem các lệnh theo phân loại`;
+	}
+	return api.sendMessage(msg, threadID, async (error, info) => {
+		global.client.handleReply.push({
+			name: this.config.name,
+			bonus: bonus,
+			messageID: info.messageID,
+			content: group
+		})
+	});
 }
