@@ -1,5 +1,5 @@
 {
-    "name": "MiraiBypassD-Jukie",
+    "name": "GinzaTech",
     "version": "1.2.14",
     "description": "A simple Facebook Messenger Bot made by me(CatalizCS) and my brother SpermLord.",
     "main": "mirai.js",
@@ -10,9 +10,9 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/D-Jukie/miraiv2.git"
+        "url": "git+https://github.com/GinzaTech/GinBot.git"
     },
-    "author": "D-Jukie",
+    "author": "Gin",
     "license": "GPL-3.0",
     "dependencies": {
         "@miraipr0ject/assets": "",
