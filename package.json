@@ -2,7 +2,7 @@
     "name": "GinzaTech",
     "version": "1.2.14",
     "description": "A simple Facebook Messenger Bot made by me(CatalizCS) and my brother SpermLord.",
-    "main": "mirai.js",
+    "main": "Gin.js",
     "scripts": {
         "start": "node index",
         "login": "node login",
