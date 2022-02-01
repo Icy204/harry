@@ -21,13 +21,13 @@ const logger = require("./utils/log");
 
 const dashboard = http.createServer(function (_req, res) {
     res.writeHead(200, "OK", { "Content-Type": "text/plain" });
-    res.write("HI! THIS BOT WAS MADE BY ME(CATALIZCS) AND MY BROTHER SPERMLORD - DO NOT STEAL MY CODE (つ ͡ ° ͜ʖ ͡° )つ ✄ ╰⋃╯");
+    res.write("HI! THIS BOT WAS MADE BY ME(GinzaTech);
     res.end();
 });
 
 dashboard.listen(process.env.port || 0);
 
-logger("Opened server site...", "[ Starting ]");
+logger("Opened server site...", "[ StartBot ]");
 
 /////////////////////////////////////////////////////////
 //========= Create start bot and make it loop =========//
@@ -87,4 +87,3 @@ startBot();
         startBot();
     } else logger('You are using the latest version!', '[ CHECK UPDATE ]'), startBot();
 }).catch(err => logger("Unable to check update.", "[ CHECK UPDATE ]"));*/
-// THIZ BOT WAS MADE BY ME(CATALIZCS) AND MY BROTHER SPERMLORD - DO NOT STEAL MY CODE (つ ͡ ° ͜ʖ ͡° )つ ✄ ╰⋃╯
