@@ -2,7 +2,7 @@
     "name": "icybot",
     "version": "1.2.14",
     "description": "A simple Facebook Messenger Bot made by Icy",
-    "main": "mirai.js",
+    "main": "icy.js",
     "scripts": {
         "start": "node index",
         "login": "node login",
