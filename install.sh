@@ -1,20 +1,24 @@
 #!/usr/bin/env bash
 cat << "EOF"
-  __  __   _                  _     ___                 _             _   _
- |  \/  | (_)  _ __    __ _  (_)   |_ _|  _ __    ___  | |_    __ _  | | | |
- | |\/| | | | | '__|  / _` | | |    | |  | '_ \  / __| | __|  / _` | | | | |
- | |  | | | | | |    | (_| | | |    | |  | | | | \__ \ | |_  | (_| | | | | |
- |_|  |_| |_| |_|     \__,_| |_|   |___| |_| |_| |___/  \__|  \__,_| |_| |_|
+
+  _____             _           _        _ _ 
+ |_   _|           (_)         | |      | | |
+   | |  ___ _   _   _ _ __  ___| |_ __ _| | |
+   | | / __| | | | | | '_ \/ __| __/ _` | | |
+  _| || (__| |_| | | | | | \__ \ || (_| | | |
+ |_____\___|\__, | |_|_| |_|___/\__\__,_|_|_|
+             __/ |                           
+            |___/                            
 
 Special thanks to:
   Trần Xuân Thanh(ging-dev) for termux-manager.
   Phạm Quang Huy(huybopbi) for contribute this method.
 
 ===============================================
-Installation file made by CatalizCS with love <3
-GITHUB: https://github.com/CatalizCS/miraiv2
+Installation file made by icy with love <3
+GITHUB: icy
 THIS BOT MAKE FOR ONLY VIETNAMESE USER, IF YOU WANT TO USE THIS PLEASE CONTACT ME
-MIRAIPROJECT LÀ MÃ NGUỒN MỞ, HOÀN TOÀN KHÔNG ĐƯỢC BUÔN BÁN Ở BẤT CỨ NƠI NÀO, HÃY CẨN THẬN!
+IcyProject LÀ MÃ NGUỒN MỞ, HOÀN TOÀN KHÔNG ĐƯỢC BUÔN BÁN Ở BẤT CỨ NƠI NÀO, HÃY CẨN THẬN!
 LƯU Ý: SHELL SCRIPT NÀY CHỈ DÀNH CHO TERMUX!
 Để hệ thống hoạt động tối ưu, ít nhất dung lượng máy phải trống khoảng 1-2GB.
 Nhấn enter để bắt đầu tiến hành cài đặt.
