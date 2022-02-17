@@ -21,7 +21,7 @@ const loadCommand = function ({ moduleList, threadID, messageID }) {
 const unloadModule = function ({ moduleList, threadID, messageID }) {
     const { writeFileSync, unlinkSync } = global.nodemodule["fs-extra"];
     const { configPath, mainPath, api } = global.client;
-    const logger = require(mainPath + "/utils/log").loader;
+    const logger = require(mainPath + "/logger/log").loader;
 
     delete require.cache[require.resolve(configPath)];
     var configValue = require(configPath);
@@ -84,7 +84,7 @@ module.exports.run = function ({ event, args, api }) {
             );
         }
         default: {
-            return global.utils.throwError(this.config.name, threadID, messageID);
+            return global.logger.throwError(this.config.name, threadID, messageID);
         }
     }
 }
