@@ -1,6 +1,6 @@
 {
     "name": "icybot",
-    "version": "1.2.14",
+    "version": "1.2.16",
     "description": "A simple Facebook Messenger Bot made by Icy",
     "main": "icy.js",
     "scripts": {
